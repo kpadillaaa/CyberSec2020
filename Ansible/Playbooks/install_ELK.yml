@@ -1,0 +1,37 @@
+---
+- name: Config Azure VM with Docker to install ELK
+  hosts: elkservers
+  become: true
+  tasks:
+      
+      # Install Docker package
+      
+    - name: docker.io
+      apt:
+        force_apt_get: yes
+        name: docker.io
+        state: present
+      
+      # Install python
+      
+    - name: Install pip
+      apt:
+        force_apt_get: yes
+        name: python-pip
+        state: present
+
+      # Install Docker python module
+      
+    - name: Install Docker python module
+      pip:
+        name: docker
+        state: present
+      
+      # Download an ELK container image and run it
+      
+    - name: download and launch a docker ELK container
+      docker_container:
+        name: elkserver
+        image: sebp/elk
+        state: started
+        published_ports: 5601:5601, 9200:9200, 5044:5044

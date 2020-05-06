@@ -1,0 +1,37 @@
+---
+-  name: Install and launch Filebeat
+   hosts: webservers
+   become: yes
+   tasks:
+
+      # Download filebeat package from elastic.co
+
+   -  name: Download filebeat .deb file
+      command: curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.4.0-amd64.deb
+
+      # Install downloaded filebeat file
+
+   -  name: Install filebeat.deb
+      command: dpkg -i filebeat-7.4.0-amd64.deb
+
+      # Implant config file from /ansible/files/ into /etc/filebeat/
+
+   -  name: Drop in config file
+      copy:
+        src: /etc/ansible/files/filebeat-configuration.yml
+        dest: /etc/filebeat/filebeat.yml
+
+      # Enable filebeat
+
+   -  name: Enable and configure System Module
+      command: sudo filebeat modules enable system
+
+      # Connect filebeat to ELK server
+
+   -  name: Start filebeat
+      command: sudo filebeat setup
+
+      # Start filebeat service
+
+   -  name: Start filebeat service
+      command: service filebeat start
